@@ -3,45 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Take a Photo</title> <!-- Add title element -->
+    <title>Take a Photo</title>
     <script src="https://js.jotform.com/JotFormCustomWidget.min.js"></script>
 </head>
 <body>
     <div id="main">
         <h3>Take a Photo</h3>
-        <video id="camera-feed" width="400" height="300" autoplay></video>
-        <button id="capture-button">Capture Photo</button>
+        <video id="video" width="400" height="300" autoplay></video>
+        <button id="start-camera">Start Camera</button>
+        <button id="click-photo">Capture Photo</button>
+        <canvas id="canvas" style="display:none;"></canvas>
     </div>
 
     <script type="text/javascript">
-        JFCustomWidget.subscribe("ready", function(){
-            // Access the camera and display feed
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function(stream) {
-                    var video = document.getElementById('camera-feed');
-                    video.srcObject = stream;
-                })
-                .catch(function(err) {
-                    console.error('Error accessing camera:', err);
-                });
+        let camera_button = document.querySelector("#start-camera");
+        let video = document.querySelector("#video");
+        let click_button = document.querySelector("#click-photo");
+        let canvas = document.querySelector("#canvas");
 
-            // Capture photo when button is clicked
-            document.getElementById('capture-button').addEventListener('click', function() {
-                var canvas = document.createElement('canvas');
-                var video = document.getElementById('camera-feed');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                var context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                var photoUrl = canvas.toDataURL('image/png');
-                
+        camera_button.addEventListener('click', async function() {
+            try {
+                let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+            }
+        });
+
+        click_button.addEventListener('click', function() {
+            try {
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                let image_data_url = canvas.toDataURL('image/jpeg');
+
                 // Send the captured photo to JotForm
-                var msg = {
+                let msg = {
                     valid: true,
-                    value: photoUrl
+                    value: image_data_url
                 }
                 JFCustomWidget.sendSubmit(msg);
-            });
+            } catch (err) {
+                console.error('Error capturing photo:', err);
+            }
         });
     </script>
 </body>
