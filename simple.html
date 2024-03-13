@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="//js.jotform.com/JotFormCustomWidget.min.js"></script>
+</head>
+<body>
+    <div id="main">
+        <h3>Take a Photo</h3>
+        <div id="camera-feed"></div>
+        <button id="capture-button">Capture Photo</button>
+    </div>
+
+    <script type="text/javascript">
+        JFCustomWidget.subscribe("ready", function(){
+            // Access the camera and display feed
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    var video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.autoplay = true;
+                    document.getElementById('camera-feed').appendChild(video);
+                })
+                .catch(function(err) {
+                    console.error('Error accessing camera:', err);
+                });
+
+            // Capture photo when button is clicked
+            document.getElementById('capture-button').addEventListener('click', function() {
+                var canvas = document.createElement('canvas');
+                var video = document.querySelector('video');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                var context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                var photoUrl = canvas.toDataURL('image/png');
+                
+                // Send the captured photo to JotForm
+                var msg = {
+                    valid: true,
+                    value: photoUrl
+                }
+                JFCustomWidget.sendSubmit(msg);
+            });
+        });
+    </script>
+</body>
+</html>
