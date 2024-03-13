@@ -6,7 +6,7 @@
 <body>
     <div id="main">
         <h3>Take a Photo</h3>
-        <div id="camera-feed"></div>
+        <video id="camera-feed" width="400" height="300" autoplay></video>
         <button id="capture-button">Capture Photo</button>
     </div>
 
@@ -15,10 +15,8 @@
             // Access the camera and display feed
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(function(stream) {
-                    var video = document.createElement('video');
+                    var video = document.getElementById('camera-feed');
                     video.srcObject = stream;
-                    video.autoplay = true;
-                    document.getElementById('camera-feed').appendChild(video);
                 })
                 .catch(function(err) {
                     console.error('Error accessing camera:', err);
@@ -27,7 +25,7 @@
             // Capture photo when button is clicked
             document.getElementById('capture-button').addEventListener('click', function() {
                 var canvas = document.createElement('canvas');
-                var video = document.querySelector('video');
+                var video = document.getElementById('camera-feed');
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
                 var context = canvas.getContext('2d');
