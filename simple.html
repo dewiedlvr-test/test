@@ -36,12 +36,8 @@
             document.getElementById('labelText').innerHTML = label;
             // Subscribe to form submit event
             JFCustomWidget.subscribe("submit", function(){
-                var msg = {
-                    valid: true,
-                    value: image_data_url // Use the image_data_url defined above
-                }
                 // Send value to JotForm
-                JFCustomWidget.sendSubmit(msg);
+                JFCustomWidget.sendData(image_data_url);
             });
         });
     </script>
