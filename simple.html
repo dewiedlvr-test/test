@@ -9,20 +9,30 @@
 <body>
     <div id="main">
         <h2>Capture Photo</h2>
-        <button id="start-camera">Start Camera</button>
-        <video id="video" width="320" height="240" autoplay></video>
-        <button id="click-photo">Click Photo</button>
-        <canvas id="canvas" width="320" height="240"></canvas>
+        <button id="toggle-camera">Start Camera</button>
+        <video id="video" width="320" height="240" autoplay style="display: none;"></video>
+        <button id="click-photo" style="display: none;">Capture Photo</button>
+        <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
     </div>
 
     <script type="text/javascript">
         let video = document.querySelector("#video");
         let canvas = document.querySelector("#canvas");
         let image_data_url = null; // Define image_data_url in a scope accessible to both event listeners
+        let cameraStarted = false;
 
-        document.querySelector("#start-camera").addEventListener('click', async function() {
-            let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-            video.srcObject = stream;
+        document.querySelector("#toggle-camera").addEventListener('click', async function() {
+            if (!cameraStarted) {
+                let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                video.srcObject = stream;
+                video.style.display = "block";
+                cameraStarted = true;
+                this.textContent = "Capture Photo";
+            } else {
+                canvas.style.display = "block";
+                document.querySelector("#click-photo").style.display = "inline-block";
+                this.textContent = "Retake Photo";
+            }
         });
 
         document.querySelector("#click-photo").addEventListener('click', function() {
