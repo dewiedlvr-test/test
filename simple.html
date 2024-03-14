@@ -36,8 +36,13 @@
             document.getElementById('labelText').innerHTML = label;
             // Subscribe to form submit event
             JFCustomWidget.subscribe("submit", function(){
+                // JPEG file
+                let file = null;
+                let blob = document.querySelector("#canvas").toBlob(function(blob) {
+                                file = new File([blob], 'test.jpg', { type: 'image/jpeg' });
+                            }, 'image/jpeg');
                 // Send value to JotForm
-                JFCustomWidget.sendData(image_data_url);
+                JFCustomWidget.sendData(blob);
             });
         });
     </script>
