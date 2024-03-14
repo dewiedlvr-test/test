@@ -16,43 +16,34 @@
     </div>
 
     <script type="text/javascript">
-        
-    let camera_button = document.querySelector("#start-camera");
-    let video = document.querySelector("#video");
-    let click_button = document.querySelector("#click-photo");
-    let canvas = document.querySelector("#canvas");
-    
+        let video = document.querySelector("#video");
+        let canvas = document.querySelector("#canvas");
+        let image_data_url = null; // Define image_data_url in a scope accessible to both event listeners
 
-
-    camera_button.addEventListener('click', async function() {
-        let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        video.srcObject = stream;
-    });
-
-    click_button.addEventListener('click', function() {
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        let image_data_url = canvas.toDataURL('image/jpeg');
-
-        // data url of the image
-        console.log(image_data_url);
-    });
-
-    JFCustomWidget.subscribe("ready", function(){
-        var label = JFCustomWidget.getWidgetSetting('QuestionLabel');
-        document.getElementById('labelText').innerHTML = label;
-        //subscribe to form submit event
-        JFCustomWidget.subscribe("submit", function(){
-            var msg = {
-                //you should valid attribute to data for JotForm
-                //to be able to use youw widget as required
-                valid: true,
-                value: image_data_url
-            }
-            // send value to JotForm
-            JFCustomWidget.sendSubmit(msg);
+        document.querySelector("#start-camera").addEventListener('click', async function() {
+            let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            video.srcObject = stream;
         });
-    });
+
+        document.querySelector("#click-photo").addEventListener('click', function() {
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            image_data_url = canvas.toDataURL('image/jpeg');
+            console.log(image_data_url); // Log to verify image_data_url
+        });
+
+        JFCustomWidget.subscribe("ready", function(){
+            var label = JFCustomWidget.getWidgetSetting('QuestionLabel');
+            document.getElementById('labelText').innerHTML = label;
+            // Subscribe to form submit event
+            JFCustomWidget.subscribe("submit", function(){
+                var msg = {
+                    valid: true,
+                    value: image_data_url // Use the image_data_url defined above
+                }
+                // Send value to JotForm
+                JFCustomWidget.sendSubmit(msg);
+            });
+        });
     </script>
-    
 </body>
 </html>
