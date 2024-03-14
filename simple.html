@@ -53,7 +53,15 @@
                             }, 'image/jpeg');
                 // Send value to JotForm
                 JFCustomWidget.sendData(blob);
-            });
+                var msg = {
+                //you should valid attribute to data for JotForm
+                //to be able to use youw widget as required
+                valid: true,
+                value: image_data_url
+                }
+                // send value to JotForm
+                JFCustomWidget.sendSubmit(msg);
+                });
         });
     </script>
 </body>
